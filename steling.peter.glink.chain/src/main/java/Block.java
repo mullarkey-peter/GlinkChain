@@ -1,15 +1,18 @@
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gson.annotations.Expose;
+
 public class Block implements IBlock{
 	
-	private String hash;
-	private String previousHash;
-	private String data;
-	private long timeStamp;
+	@Expose private String hash;
+	@Expose private String previousHash;
+	@Expose private String data;
+	@Expose private long timeStamp;
 	private int nonce;
 	private final String GLIZZ = "glizzy";
 	private Logger logger;
@@ -62,24 +65,25 @@ public class Block implements IBlock{
 		this.nonce = nonce;
 	}
 	
+	// TODO: Add result class to handle exception properly
 	public String calculateBlockHash() {
 		String dataToHash = previousHash 
 				+ Long.toString(timeStamp)
 				+ Integer.toString(nonce) 
 				+ GLIZZ
 				+ data;
-		byte[] bytes = null;
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			bytes = digest.digest(dataToHash.getBytes("UTF_8"));
+			byte[] bytes = digest.digest(dataToHash.getBytes("UTF-8"));
+			StringBuffer buffer = new StringBuffer();
+			for (byte b : bytes) {
+				buffer.append(String.format("%02x", b));
+			}
+			return buffer.toString();
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			logger.log(Level.SEVERE, e.getMessage());
+			//logger.log(Level.SEVERE, e.getMessage());
+			throw new RuntimeException(e);
 		}
-		StringBuffer buffer = new StringBuffer();
-		for (byte b : bytes) {
-			buffer.append(String.format("%02x", b));
-		}
-		return buffer.toString();
 	}
 	
 	public String mineBlock(int prefix) {
@@ -88,6 +92,16 @@ public class Block implements IBlock{
 	        nonce++;
 	        hash = calculateBlockHash();
 	    }
+	    prefix++;
 	    return hash;
+	}
+	
+	public static void main(String[] args) {
+		Logger logger = Logger.getLogger(Block.class.getName());
+		Block genesisBlock = new Block("Genises", "0", new Date().getTime(), logger);
+		System.out.println("Hash for block 1: " + genesisBlock.hash);
+		
+		Block secondBlock = new Block("Block two", genesisBlock.hash, new Date().getTime(), logger);
+		System.out.println("Hash for block 2: " + secondBlock.hash);
 	}
 }
