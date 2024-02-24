@@ -1,3 +1,4 @@
+package Interfaces;
 
 public interface IBlock {
 	public String calculateBlockHash();

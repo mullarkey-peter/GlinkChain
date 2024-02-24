@@ -7,6 +7,8 @@ import java.util.logging.Logger;
 
 import com.google.gson.annotations.Expose;
 
+import Interfaces.IBlock;
+
 public class Block implements IBlock{
 	
 	@Expose private String hash;
@@ -65,28 +67,21 @@ public class Block implements IBlock{
 		this.nonce = nonce;
 	}
 	
-	// TODO: Add result class to handle exception properly
 	public String calculateBlockHash() {
+		
+		logger.log(Level.FINE, "Entering calculateBlockHash().");
 		String dataToHash = previousHash 
 				+ Long.toString(timeStamp)
 				+ Integer.toString(nonce) 
 				+ GLIZZ
 				+ data;
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-256");
-			byte[] bytes = digest.digest(dataToHash.getBytes("UTF-8"));
-			StringBuffer buffer = new StringBuffer();
-			for (byte b : bytes) {
-				buffer.append(String.format("%02x", b));
-			}
-			return buffer.toString();
-		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			//logger.log(Level.SEVERE, e.getMessage());
-			throw new RuntimeException(e);
-		}
+		
+		return StringUtil.applySHA256(dataToHash);
 	}
 	
 	public String mineBlock(int prefix) {
+		logger.log(Level.FINE, "Entering mineBlock().");
+		logger.log(Level.INFO, "Mining block with prefix" + prefix);
 	    String prefixString = new String(new char[prefix]).replace('\0', '0');
 	    while (!hash.substring(0, prefix).equals(prefixString)) {
 	        nonce++;
@@ -99,9 +94,9 @@ public class Block implements IBlock{
 	public static void main(String[] args) {
 		Logger logger = Logger.getLogger(Block.class.getName());
 		Block genesisBlock = new Block("Genises", "0", new Date().getTime(), logger);
-		System.out.println("Hash for block 1: " + genesisBlock.hash);
+		logger.log(Level.INFO, "Hash for block 1: " + genesisBlock.hash);
 		
 		Block secondBlock = new Block("Block two", genesisBlock.hash, new Date().getTime(), logger);
-		System.out.println("Hash for block 2: " + secondBlock.hash);
+		logger.log(Level.INFO,"Hash for block 2: " + secondBlock.hash);
 	}
 }
