@@ -51,25 +51,7 @@ public class GlinkChain {
 	}
 	
 	public static void main(String[] args) {	
-		/*
-		 * Logger logger = Logger.getLogger(GlinkChain.class.getName());
-		 * 
-		 * //add our blocks to the block chain ArrayList: glinkChain.add(new
-		 * Block("Hi im the first block", "0", new Date().getTime(),logger));
-		 * glinkChain.get(0).mineBlock(prefix); glinkChain.add(new
-		 * Block("Yo im the second block",glinkChain.get(glinkChain.size()-1).getHash(),
-		 * new Date().getTime(),logger)); glinkChain.get(1).mineBlock(prefix);
-		 * glinkChain.add(new
-		 * Block("Hey im the third block",glinkChain.get(glinkChain.size()-1).getHash(),
-		 * new Date().getTime(),logger)); glinkChain.get(2).mineBlock(prefix);
-		 * 
-		 * logger.log(Level.INFO, "\nBlockchain is Valid: " + isChainValid(logger));
-		 * 
-		 * 
-		 * String blockchainJson = new
-		 * GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation().
-		 * create().toJson(glinkChain); logger.log(Level.INFO, blockchainJson);
-		 */
+
 		
 		//Setup Bouncy castle as a Security Provider
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); 
